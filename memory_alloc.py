@@ -1,9 +1,9 @@
 import numpy as np
 from psutil import virtual_memory
+from pynvml import *
 import torch
 import torch.nn as nn
 from torchvision import models
-from pynvml import *
 
 
 class MemoryAllocation():
