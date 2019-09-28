@@ -42,9 +42,9 @@ class MemoryAllocation():
         The 'input_type' indicates whether the input is 4, 8, 16, 32 bits.
         """
         if self.input_type == "torch.FloatTensor":
-            return total_params*32
+            return total_params*32*self.batch_size
         elif self.input_type == "torch.DoubleTensor":
-            return total_params*64
+            return total_params*64*self.batch_size
         else:
             return Exception("Cannot understand input type.")
 
