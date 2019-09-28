@@ -12,9 +12,7 @@ class MemoryAllocation():
 
     Args:
         model: Pytorch Model
-               (default = resnet18)
         input: 4d Tensor, usually output of dataloader.
-               (default = (10, 3, 572, 572))
     """
 
     def __init__(
