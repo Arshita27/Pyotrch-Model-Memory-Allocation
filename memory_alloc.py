@@ -19,9 +19,11 @@ class MemoryAllocation():
         self,
         model: nn.Module,
         input: torch.Tensor,
+        device: str,
     ):
         self.model = model
         self.input_type = input.type()
+        self.device = device
 
     def get_num_params(self, ) -> int:
         """
@@ -57,12 +59,22 @@ class MemoryAllocation():
         print("Total params in the given model: ", total_params)
         print("Total memory required (including model parameters, input_type and batch_size):", memory_needed, "bits.")
 
-        if torch.cuda.is_available():
-            nvmlInit()
-            handle = nvmlDeviceGetHandleByIndex(0)
-            info = nvmlDeviceGetMemoryInfo(handle)
-            total_device_memory = info.total
-            print("GPU Memory available: ", info.total, "bytes")
+        # if torch.cuda.is_available():
+        #     nvmlInit()
+        #     handle = nvmlDeviceGetHandleByIndex(0)
+        #     info = nvmlDeviceGetMemoryInfo(handle)
+        #     total_device_memory = info.total
+        #     print("GPU Memory available: ", info.total, "bytes")
+        if self.device == "GPU":
+            while torch.cuda.is_available():
+                try:
+                    nvmlInit()
+                    handle = nvmlDeviceGetHandleByIndex(0)
+                    info = nvmlDeviceGetMemoryInfo(handle)
+                    total_device_memory = info.total
+                    print("GPU Memory available: ", info.total, "bytes")
+                except:
+                    print("GPU not found!")
         else:
             mem = virtual_memory()
             total_device_memory = mem.total
