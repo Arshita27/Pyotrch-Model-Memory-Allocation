@@ -14,5 +14,5 @@ if __name__ == "__main__":
 
     model = models.resnet18()
 
-    MemoryAllocation = MemoryAllocation(model, input, device="GPU")
+    MemoryAllocation = MemoryAllocation(model, input, device="CPU")
     MemoryAllocation.get_memory_info()

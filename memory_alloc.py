@@ -38,15 +38,17 @@ class MemoryAllocation():
             total_params += params_layer
         return total_params
 
-    def get_memory_params(self, total_params, ) -> int:
+    def get_memory_params(self, total_params: int, ) -> int:
         """
         Multiplies the total nnumber of parameters in the model with the type of input.
         The 'input_type' indicates whether the input is 4, 8, 16, 32 bits.
         """
-        if self.input_type == "torch.FloatTensor":
+        if self.input_type == "torch.FloatTensor" or self.input_type == "torch.cuda.FloatTensor" :
             return total_params*32
-        elif self.input_type == "torch.DoubleTensor":
+        elif self.input_type == "torch.DoubleTensor" or self.input_type == "torch.cuda.DoubleTensor":
             return total_params*64
+        elif self.input_type  == "torch.ByteTensor" or self.input_type == "torch.cuda.ByteTensor":
+            return total_params*8
         else:
             return Exception("Cannot understand input type.")
 
@@ -57,14 +59,10 @@ class MemoryAllocation():
         total_params = self.get_num_params()
         memory_needed = self.get_memory_params(total_params)
         print("Total params in the given model: ", total_params)
-        print("Total memory required (including model parameters, input_type and batch_size):", memory_needed, "bits.")
-
-        # if torch.cuda.is_available():
-        #     nvmlInit()
-        #     handle = nvmlDeviceGetHandleByIndex(0)
-        #     info = nvmlDeviceGetMemoryInfo(handle)
-        #     total_device_memory = info.total
-        #     print("GPU Memory available: ", info.total, "bytes")
+        print("Total memory required to load a total of {} model parameters and of input type {} is {} bits".format(
+                                                                                total_params,
+                                                                                self.input_type,
+                                                                                memory_needed))
         if self.device == "GPU":
             while torch.cuda.is_available():
                 try:
@@ -73,11 +71,15 @@ class MemoryAllocation():
                     info = nvmlDeviceGetMemoryInfo(handle)
                     total_device_memory = info.total
                     print("GPU Memory available: ", info.total, "bytes")
+                    break
                 except:
-                    print("GPU not found!")
-        else:
+                    print("GPU not found! Memory will be computed on CPU.")
+        elif self.device == "CPU":
             mem = virtual_memory()
             total_device_memory = mem.total
             print("CPU Memory available: ", total_device_memory, "bytes")
+        else:
+            raise Exception("{} device is not defined. Use one of the following: 'GPU' or 'CPU'.".format(self.device))
+
         used = ((memory_needed/8)/total_device_memory)*100
-        print("Percentage of memory used after loading the given model:", '%.2f' % used, "%")
+        print("Percentage of {} memory used after loading the given model is {}%".format(self.device, '%.2f' % used))
