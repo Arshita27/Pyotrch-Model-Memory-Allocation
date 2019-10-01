@@ -4,7 +4,8 @@ The Memory Allocation module has been created to let the users understand the nu
 
 The parameters in the model are converted into bits considering the input type that is fed into the model. (for eg: input type = FloatTensor corresponds to the fact that each paramter will be of size Float and will take 32 bit memory)
 
-# TODO:
+### Information regarding arguments to the module.
+
 The module takes three arguments as inputs.
   1. model: nn.Module (eg: resnet50 or any other pytorch model)
   2. input: torch.Tensor (eg: torch.Tensor)
@@ -18,3 +19,5 @@ The module takes three arguments as inputs.
     - torch.ByteTensor or torch.cuda.ByteTensor
     more types will be added soon.
   * If device = "GPU" is specified but not found while running this module, it will throw in a message stating that no "GPU was found" and will caluclate the memory allocation with respect to "CPU".
+
+# TODO:
