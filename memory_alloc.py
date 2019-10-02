@@ -52,6 +52,22 @@ class MemoryAllocation():
         else:
             return Exception("Cannot understand input type.")
 
+    def gpu_get_memory(self, ):
+        """
+        Calculates memory in GPU.
+        """
+        nvmlInit()
+        handle = nvmlDeviceGetHandleByIndex(0)
+        info = nvmlDeviceGetMemoryInfo(handle)
+        return info.total
+
+    def cpu_get_memory(self, ):
+        """
+        Calculates memory in CPU.
+        """
+        mem = virtual_memory()
+        return mem.total
+
     def get_memory_info(self):
         """
         Get info of GPU/CPU memory and compare with the memory used to lead the model with given input.
@@ -64,22 +80,21 @@ class MemoryAllocation():
                                                                                 self.input_type,
                                                                                 memory_needed))
         if self.device == "GPU":
-            while torch.cuda.is_available():
-                try:
-                    nvmlInit()
-                    handle = nvmlDeviceGetHandleByIndex(0)
-                    info = nvmlDeviceGetMemoryInfo(handle)
-                    total_device_memory = info.total
-                    print("GPU Memory available: ", info.total, "bytes")
-                    break
-                except:
-                    print("GPU not found! Memory will be computed on CPU.")
+            if torch.cuda.is_available():
+                total_device_memory = self.gpu_get_memory()
+                print("GPU memory avaiable is {} bytes.".format(total_device_memory))
+
+            else:
+                print("GPU not found! Memory will be computed on CPU.")
+                total_device_memory = self.cpu_get_memory()
+                print("CPU memory avaiable is {} bytes.".format(total_device_memory))
+
         elif self.device == "CPU":
-            mem = virtual_memory()
-            total_device_memory = mem.total
-            print("CPU Memory available: ", total_device_memory, "bytes")
+            total_device_memory = self.cpu_get_memory()
+            print("CPU memory avaiable is {} bytes.".format(total_device_memory))
+
         else:
-            raise Exception("{} device is not defined. Use one of the following: 'GPU' or 'CPU'.".format(self.device))
+            raise Exception("'{}' device is not defined. Use one of the following: 'GPU' or 'CPU'.".format(self.device))
 
         used = ((memory_needed/8)/total_device_memory)*100
         print("Percentage of {} memory used after loading the given model is {}%".format(self.device, '%.2f' % used))
