@@ -12,11 +12,11 @@ The parameters in the model are converted into bits considering the input type t
   4. psutil: pip install psutil
   5. For 'pynvm', you can use either of the two commands:
 
-  pypi:
-  >  pip3 install nvidia-ml-py3
+    pypi:
+    >  pip3 install nvidia-ml-py3
 
-  Conda:
-  >  conda install nvidia-ml-py3 -c fastai
+    Conda:
+    >  conda install nvidia-ml-py3 -c fastai
 
 #### Information regarding arguments to the module.
 
