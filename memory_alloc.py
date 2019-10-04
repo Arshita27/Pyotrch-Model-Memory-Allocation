@@ -5,6 +5,7 @@ import torch
 import torch.nn as nn
 from torchvision import models
 
+from display_params import display_params
 
 class MemoryAllocation():
     """
@@ -20,22 +21,33 @@ class MemoryAllocation():
         model: nn.Module,
         input: torch.Tensor,
         device: str,
+        give_summary: bool,
     ):
         self.model = model
         self.input_type = input.type()
         self.device = device
+        self.give_summary = give_summary
 
     def get_num_params(self, ) -> int:
         """
         Calculates the total number of parameters that need to be trained in the model.
         """
         total_params = 0
+        layer_name = []
+        learn_params_shape = []
+        learn_params = []
         for param_tensor in self.model.state_dict():
             # print(param_tensor, "\t", self.model.state_dict()[param_tensor].size())
             params_layer = 1
             for each_dim in self.model.state_dict()[param_tensor].size():
                 params_layer = params_layer * each_dim
             total_params += params_layer
+            layer_name.append(param_tensor)
+            learn_params_shape.append(self.model.state_dict()[param_tensor].size())
+            learn_params.append(params_layer)
+
+        if self.give_summary:
+            display_params(layer_name, learn_params_shape, learn_params)
         return total_params
 
     def get_memory_params(self, total_params: int, ) -> int:
