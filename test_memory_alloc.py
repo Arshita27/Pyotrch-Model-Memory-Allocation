@@ -14,5 +14,4 @@ if __name__ == "__main__":
 
     model = models.resnet18()
 
-    MemoryAllocation = MemoryAllocation(model, input, device="CPU")
-    MemoryAllocation.get_memory_info()
+    MemoryAllocation(model, input, device="CPU").get_memory_info()
