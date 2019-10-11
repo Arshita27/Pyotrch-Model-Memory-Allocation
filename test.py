@@ -19,4 +19,4 @@ if __name__ == "__main__":
     MemoryMap(model,
             input,
             device="GPU",
-            give_summary=True).get_memory_info()
+            get_summary=True).get_memory_info()

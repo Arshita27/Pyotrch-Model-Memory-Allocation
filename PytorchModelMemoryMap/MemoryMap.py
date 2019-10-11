@@ -14,6 +14,9 @@ class MemoryMap:
     Args:
         model: Pytorch Model
         input: 4d Tensor, usually output of dataloader.
+        device: Device on which we will be loading our model on, "GPU" or "CPU".
+        get_summary: if True, will display (in detail) all the layers of the given model
+                     with their corresponding learnable params.
     """
 
     def __init__(
@@ -21,12 +24,12 @@ class MemoryMap:
         model: nn.Module,
         input: torch.Tensor,
         device: str,
-        give_summary: bool,
+        get_summary: bool,
     ):
         self.model = model
         self.input_type = input.type()
         self.device = device
-        self.give_summary = give_summary
+        self.get_summary = get_summary
 
     def get_num_params(self, ) -> int:
         """
@@ -37,7 +40,6 @@ class MemoryMap:
         learn_params_shape = []
         learn_params = []
         for param_tensor in self.model.state_dict():
-            # print(param_tensor, "\t", self.model.state_dict()[param_tensor].size())
             params_layer = 1
             for each_dim in self.model.state_dict()[param_tensor].size():
                 params_layer = params_layer * each_dim
@@ -46,7 +48,7 @@ class MemoryMap:
             learn_params_shape.append(self.model.state_dict()[param_tensor].size())
             learn_params.append(params_layer)
 
-        if self.give_summary:
+        if self.get_summary:
             DisplayParams.get_memory_per_params(layer_name, learn_params_shape, learn_params)
         return total_params
 
