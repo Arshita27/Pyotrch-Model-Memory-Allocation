@@ -18,5 +18,5 @@ if __name__ == "__main__":
     # Call Memory Map Module
     MemoryMap(model,
             input,
-            device="GPU",
+            device="CPU",
             get_summary=True).get_memory_info()

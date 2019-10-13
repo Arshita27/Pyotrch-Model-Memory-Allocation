@@ -68,7 +68,7 @@ class MemoryMap:
 
     def gpu_get_memory(self, ):
         """
-        Calculates memory in GPU.
+        Calculates memory used if model is on GPU.
         """
         nvmlInit()
         handle = nvmlDeviceGetHandleByIndex(0)
@@ -77,7 +77,7 @@ class MemoryMap:
 
     def cpu_get_memory(self, ):
         """
-        Calculates memory in CPU.
+        Calculates memory used if model is on CPU.
         """
         mem = virtual_memory()
         return mem.total
@@ -112,3 +112,5 @@ class MemoryMap:
 
         used = ((memory_needed/8)/total_device_memory)*100
         print("Percentage of {} memory used after loading the given model is {}%".format(self.device, '%.4f' % used))
+        print("\n******************************************************************************************************************************")
+        print()
