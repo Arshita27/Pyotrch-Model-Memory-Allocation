@@ -5,14 +5,18 @@ import torch
 import torch.nn as nn
 from torchvision import models
 
+from .DisplayParams import DisplayParams
 
-class MemoryAllocation():
+class MemoryMap:
     """
     ToDo: Write a short description.
 
     Args:
         model: Pytorch Model
         input: 4d Tensor, usually output of dataloader.
+        device: Device on which we will be loading our model on, "GPU" or "CPU".
+        get_summary: if True, will display (in detail) all the layers of the given model
+                     with their corresponding learnable params.
     """
 
     def __init__(
@@ -20,22 +24,32 @@ class MemoryAllocation():
         model: nn.Module,
         input: torch.Tensor,
         device: str,
+        get_summary: bool,
     ):
         self.model = model
         self.input_type = input.type()
         self.device = device
+        self.get_summary = get_summary
 
     def get_num_params(self, ) -> int:
         """
         Calculates the total number of parameters that need to be trained in the model.
         """
         total_params = 0
+        layer_name = []
+        learn_params_shape = []
+        learn_params = []
         for param_tensor in self.model.state_dict():
-            # print(param_tensor, "\t", self.model.state_dict()[param_tensor].size())
             params_layer = 1
             for each_dim in self.model.state_dict()[param_tensor].size():
                 params_layer = params_layer * each_dim
             total_params += params_layer
+            layer_name.append(param_tensor)
+            learn_params_shape.append(self.model.state_dict()[param_tensor].size())
+            learn_params.append(params_layer)
+
+        if self.get_summary:
+            DisplayParams.get_memory_per_params(layer_name, learn_params_shape, learn_params)
         return total_params
 
     def get_memory_params(self, total_params: int, ) -> int:
@@ -54,7 +68,7 @@ class MemoryAllocation():
 
     def gpu_get_memory(self, ):
         """
-        Calculates memory in GPU.
+        Calculates memory used if model is on GPU.
         """
         nvmlInit()
         handle = nvmlDeviceGetHandleByIndex(0)
@@ -63,7 +77,7 @@ class MemoryAllocation():
 
     def cpu_get_memory(self, ):
         """
-        Calculates memory in CPU.
+        Calculates memory used if model is on CPU.
         """
         mem = virtual_memory()
         return mem.total
@@ -97,4 +111,6 @@ class MemoryAllocation():
             raise Exception("'{}' device is not defined. Use one of the following: 'GPU' or 'CPU'.".format(self.device))
 
         used = ((memory_needed/8)/total_device_memory)*100
-        print("Percentage of {} memory used after loading the given model is {}%".format(self.device, '%.2f' % used))
+        print("Percentage of {} memory used after loading the given model is {}%".format(self.device, '%.4f' % used))
+        print("\n******************************************************************************************************************************")
+        print()

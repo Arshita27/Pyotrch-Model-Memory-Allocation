@@ -24,6 +24,7 @@ The module takes three arguments as inputs.
   1. model: nn.Module (eg: resnet50 or any other pytorch model)
   2. input: torch.Tensor (eg: torch.Tensor)
   3. device: str ("GPU" or "CPU")
+  4. get_summary: bool
 
 Note:
   * The module works irrespective of the fact that the model is loaded on GPU or not.
