@@ -4,6 +4,8 @@ The Memory Allocation module has been created to let the users understand the nu
 
 The parameters in the model are converted into bits considering the input type that is fed into the model. (for eg: input type = FloatTensor corresponds to the fact that each paramter will be of size Float and will take 32 bit memory)
 
+Exists as pip package: https://test.pypi.org/project/PytorchModel-MemoryMap-ag/#description
+
 #### Packages that need to be installed:
 
   1. python: 3.6

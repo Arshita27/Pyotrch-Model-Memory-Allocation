@@ -2,7 +2,7 @@ import numpy as np
 import torch
 from torchvision import models
 
-from PytorchModelMemoryMap.MemoryMap import MemoryMap
+import PytorchModelMemoryMap as pm3
 
 
 if __name__ == "__main__":
@@ -16,7 +16,7 @@ if __name__ == "__main__":
     model = models.resnet18()
 
     # Call Memory Map Module
-    MemoryMap(model,
+    pm3.MemoryMap(model,
             input,
             device="CPU",
             get_summary=True).get_memory_info()
